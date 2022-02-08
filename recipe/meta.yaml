@@ -1,5 +1,5 @@
-{% set version = "6.3.0" %}
-{% set sha256 = "0a97b276c62db633e9e97a816282bdd166f9df74e28204f0c8fa54b71944cfdc" %}
+{% set version = "8.2.0" %}
+{% set sha256 = "0fd9f64a5120980a89b64299806c12bb8df8ceea155e5200b705301eb2401e19" %}
 
 package:
   name: ipyparallel
