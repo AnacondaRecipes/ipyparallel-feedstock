@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+import ipyparallel
+import ipyparallel.apps
+import ipyparallel.client
+import ipyparallel.controller
+import ipyparallel.engine
+import ipyparallel.serialize
+
 import sys
 from subprocess import check_output, STDOUT
 

@@ -24,7 +24,8 @@ requirements:
     - pip
     - setuptools
     - wheel
-    - jupyterlab 3.5.3
+    - jupyterlab 3.5.3  # [not s390x]
+    - jupyterlab 3.3.2  # [s390x]
     - hatchling
   run:
     - python
@@ -46,13 +47,6 @@ test:
     - jupyterlab ==3.*
     - notebook >=5.3
     - m2-grep  # [win]
-  imports:
-    - ipyparallel
-    - ipyparallel.apps
-    - ipyparallel.client
-    - ipyparallel.controller
-    - ipyparallel.engine
-    - ipyparallel.serialize
   commands:
     - pip check
     - ipcluster --help
