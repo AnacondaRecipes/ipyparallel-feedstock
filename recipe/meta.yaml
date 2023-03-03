@@ -1,44 +1,51 @@
-{% set version = "6.3.0" %}
-{% set sha256 = "0a97b276c62db633e9e97a816282bdd166f9df74e28204f0c8fa54b71944cfdc" %}
+{% set name = "ipyparallel" %}
+{% set version = "8.4.1" %}
 
 package:
-  name: ipyparallel
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  fn: ipyparallel-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/i/ipyparallel/ipyparallel-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/ipyparallel-{{ version }}.tar.gz
+  sha256: 670bbe05755381742e1ea01177dc428ff8f3e94af1f0d5642c9d19f37ca8289b
 
 build:
   number: 0
   entry_points:
-    - ipcluster = ipyparallel.apps.ipclusterapp:launch_new_instance
-    - ipcontroller = ipyparallel.apps.ipcontrollerapp:launch_new_instance
-    - ipengine = ipyparallel.apps.ipengineapp:launch_new_instance
-  script: pip install --no-deps --ignore-installed .
+    - ipcluster = ipyparallel.cluster.app:main
+    - ipcontroller = ipyparallel.controller.app:main
+    - ipengine = ipyparallel.engine.app:main
+  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed .
 
 
 requirements:
   host:
     - python
     - pip
-
+    - setuptools
+    - wheel
+    - jupyterlab 3.5.3
+    - hatchling
   run:
     - python
-    - futures               # [py2k]
+    - entrypoints
     - decorator
-    - tornado >=4
-    - python-dateutil >=2.1
-    - pyzmq >=13
-    - ipython_genutils
+    - pyzmq >=18
+    - traitlets >=4.3
     - ipython >=4
     - jupyter_client
     - ipykernel >=4.4
+    - tornado >=5.1
+    - psutil
+    - python-dateutil >=2.1
+    - tqdm
 
 test:
   requires:
+    - pip
+    - jupyterlab ==3.*
     - notebook >=5.3
+    - m2-grep  # [win]
   imports:
     - ipyparallel
     - ipyparallel.apps
@@ -47,16 +54,33 @@ test:
     - ipyparallel.engine
     - ipyparallel.serialize
   commands:
-    - ipcluster -h
-    - ipengine -h
-    - ipcontroller -h
+    - pip check
+    - ipcluster --help
+    - ipcontroller --help
+    - ipengine --help
+    # list
+    - jupyter labextension list
+    - jupyter server extension list
+    - jupyter serverextension list
+    # validate
+    - jupyter labextension list 1>labextensions 2>&1
+    - jupyter server extension list 1>server_extensions 2>&1
+    - jupyter serverextension list 1>serverextensions 2>&1
+    - grep -ie "ipyparallel-labextension.*v{{ version.replace(".", "\\.") }}.*OK" labextensions
+    - grep -ie "ipyparallel.*{{ version.replace(".", "\\.") }}.*OK" server_extensions
+    - grep -ie "ipyparallel.*{{ version.replace(".", "\\.") }}.*OK" serverextensions
 
 about:
-  home: http://ipython.org
+  home: https://github.com/ipython/ipyparallel
   license: BSD-3-Clause
   license_file: COPYING.md
   license_family: BSD
   summary: Interactive Parallel Computing with IPython
+  description: |
+    IPython Parallel (ipyparallel) is a Python package and collection of CLI scripts 
+    for controlling clusters of IPython processes, built on the Jupyter protocol.
+  doc_url: https://ipyparallel.readthedocs.io
+  dev_url: https://github.com/ipython/ipyparallel
 
 extra:
   recipe-maintainers:
