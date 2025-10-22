@@ -38,6 +38,7 @@ requirements:
     - tqdm
 
 #E   PermissionError: [Errno 13] Permission denied: '/tmp/log/ipcontroller-test-106717.log'
+{% set deselect_tests = "" %}
 {% set deselect_tests = " --deselect=test_cluster.py::test_cluster_repr" %}  # [unix]
 test:
   imports:
