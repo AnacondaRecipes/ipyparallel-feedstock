@@ -51,10 +51,14 @@ test:
     - ipcluster -h
     - ipcontroller -h
     - ipengine -h
-    # Run extension lists once with output redirection
-    - jupyter labextension list 2>&1 | tee labextensions
-    - jupyter server extension list 2>&1 | tee server_extensions
-    - jupyter nbclassic extension list 2>&1 | tee nbclassic_extensions
+    # Windows: redirect without tee
+    - jupyter labextension list 1>labextensions 2>&1  # [win]
+    - jupyter server extension list 1>server_extensions 2>&1  # [win]
+    - jupyter nbclassic extension list 1>nbclassic_extensions 2>&1  # [win]
+    # Unix: use tee for visibility
+    - jupyter labextension list 2>&1 | tee labextensions  # [unix]
+    - jupyter server extension list 2>&1 | tee server_extensions  # [unix]
+    - jupyter nbclassic extension list 2>&1 | tee nbclassic_extensions  # [unix]
     # Validate extensions are registered
     - python -c "import re, pathlib; assert re.findall('ipyparallel-labextension.*OK', pathlib.Path('labextensions').read_text())"
     - python -c "import re, pathlib; assert re.findall('ipyparallel.*OK', pathlib.Path('server_extensions').read_text())"
