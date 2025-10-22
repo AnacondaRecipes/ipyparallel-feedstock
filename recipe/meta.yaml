@@ -37,6 +37,8 @@ requirements:
     - python-dateutil >=2.1
     - tqdm
 
+#E   PermissionError: [Errno 13] Permission denied: '/tmp/log/ipcontroller-test-106717.log'
+{% set deselect_tests = " --deselect=test_cluster.py::test_cluster_repr" %}  # [unix]
 test:
   imports:
     - ipyparallel
@@ -62,7 +64,7 @@ test:
     - python -c "import re, pathlib; assert re.findall(r'ipyparallel.*[Oo][Kk]', pathlib.Path('server_extensions').read_text())"
     - python -c "import re, pathlib; assert re.findall(r'ipyparallel.*[Oo][Kk]', pathlib.Path('nbclassic_extensions').read_text())"
     # Run test suite
-    - pytest --pyargs --asyncio-mode=auto ipyparallel.tests
+    - pytest --pyargs --asyncio-mode=auto ipyparallel.tests {{ deselect_tests }}
   requires:
     - pip
     - pytest
@@ -72,6 +74,7 @@ test:
     - notebook
     - nbclassic
     - m2-grep  # [win]
+    - mpi4py  # [win]
 
 about:
   home: https://github.com/ipython/ipyparallel
