@@ -1,39 +1,38 @@
 {% set name = "ipyparallel" %}
-{% set version = "8.6.1" %}
+{% set version = "9.0.2" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/ipyparallel-{{ version }}.tar.gz
-  sha256: a39aa5ef9560170bf0e9afedca9ff045e1b9c1832c49303377edcc91cea9fb77
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: d992edd698a99d45f2d9059af1c9ae8f086d1aeedb3e80436029a2f28d069f83
 
 build:
   number: 0
+  script: {{ PYTHON }} -m pip install --no-deps --no-build-isolation --ignore-installed .
   entry_points:
     - ipcluster = ipyparallel.cluster.app:main
     - ipcontroller = ipyparallel.controller.app:main
     - ipengine = ipyparallel.engine.app:main
-  script: {{ PYTHON }} -m pip install --no-deps --no-build-isolation --ignore-installed .
-  skip: true # [py<37 or s390x]
-
+  skip: true # [py<38]
 
 requirements:
   host:
     - python
     - pip
-    - hatchling
+    - hatchling >=0.25
+    - jupyterlab ==4.*
   run:
     - python
-    - entrypoints
     - decorator
-    - pyzmq >=18
-    - traitlets >=4.3
-    - ipython >=4
-    - jupyter_client
-    - ipykernel >=4.4
-    - tornado >=5.1
+    - pyzmq >=25
+    - traitlets >=5
+    - ipython >=5
+    - jupyter_client >=7
+    - ipykernel >=6.9.1
+    - tornado >=6.1
     - psutil
     - python-dateutil >=2.1
     - tqdm
@@ -46,32 +45,30 @@ test:
     - ipyparallel.controller
     - ipyparallel.engine
     - ipyparallel.serialize
-  requires:
-    - pip
-{% if python != "3.12" %}
-    - jupyterlab 3
-    - notebook
-    - m2-grep  # [win]
-{% endif %}
   commands:
     - pip check
-    - ipcluster --help
-    - ipcontroller --help
-    - ipengine --help
-{% if python != "3.12" %}
-    # no ipyparallel jupyterlab 4 extension yet available.
-    # list
+    - ipcluster -h
+    - ipcontroller -h
+    - ipengine -h
     - jupyter labextension list
     - jupyter server extension list
-    - jupyter serverextension list
-    # validate
+    - jupyter nbclassic extension list
     - jupyter labextension list 1>labextensions 2>&1
     - jupyter server extension list 1>server_extensions 2>&1
-    - jupyter serverextension list 1>serverextensions 2>&1
-    - grep -ie "ipyparallel-labextension.*v{{ version.replace(".", "\\.") }}.*OK" labextensions
-    - grep -ie "ipyparallel.*{{ version.replace(".", "\\.") }}.*OK" server_extensions
-    - grep -ie "ipyparallel.*{{ version.replace(".", "\\.") }}.*OK" serverextensions
-{% endif %}
+    - jupyter nbclassic extension list 1>nbclassic_extensions 2>&1
+    - python -c "import re, pathlib; assert re.findall('ipyparallel-labextension.*OK', pathlib.Path('labextensions').read_text())"
+    - python -c "import re, pathlib; assert re.findall('ipyparallel.*OK', pathlib.Path('server_extensions').read_text())"
+    - python -c "import re, pathlib; assert re.findall('ipyparallel.*OK', pathlib.Path('nbclassic_extensions').read_text())"
+    - pytest --pyargs --asyncio-mode=auto ipyparallel.tests
+  requires:
+    - pip
+    - pytest
+    - pytest-asyncio
+    - jupyterlab ==4.*
+    - jupyter_server <3
+    - notebook
+    - nbclassic
+    - m2-grep  # [win]
 
 about:
   home: https://github.com/ipython/ipyparallel
