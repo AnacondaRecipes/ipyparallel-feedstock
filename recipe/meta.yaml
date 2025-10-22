@@ -58,9 +58,9 @@ test:
     - jupyter server extension list 1>server_extensions 2>&1
     - jupyter nbclassic extension list 1>nbclassic_extensions 2>&1
     # Validate extensions are registered
-    - python -c "import re, pathlib; assert re.findall('ipyparallel-labextension.*OK', pathlib.Path('labextensions').read_text())"
-    - python -c "import re, pathlib; assert re.findall('ipyparallel.*OK', pathlib.Path('server_extensions').read_text())"
-    - python -c "import re, pathlib; assert re.findall('ipyparallel.*OK', pathlib.Path('nbclassic_extensions').read_text())"
+    - python -c "import re, pathlib; assert re.findall(r'ipyparallel-labextension.*[Oo][Kk]', pathlib.Path('labextensions').read_text())"
+    - python -c "import re, pathlib; assert re.findall(r'ipyparallel.*[Oo][Kk]', pathlib.Path('server_extensions').read_text())"
+    - python -c "import re, pathlib; assert re.findall(r'ipyparallel.*[Oo][Kk]', pathlib.Path('nbclassic_extensions').read_text())"
     # Run test suite
     - pytest --pyargs --asyncio-mode=auto ipyparallel.tests
   requires:
