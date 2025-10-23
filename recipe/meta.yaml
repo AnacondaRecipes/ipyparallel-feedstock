@@ -27,6 +27,7 @@ requirements:
   run:
     - python
     - decorator
+    - importlib_metadata >=3.6  # [py<310]
     - pyzmq >=25
     - traitlets >=5
     - ipython >=5
