@@ -1,13 +1,16 @@
 {% set name = "ipyparallel" %}
-{% set version = "9.0.2" %}
+{% set version = "9.2.0" %}
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=test_cluster.py::test_cluster_repr" %}  # [unix]
 
+#E   PermissionError: [Errno 13] Permission denied: '/tmp/log/ipcontroller-test-106717.log'
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: d992edd698a99d45f2d9059af1c9ae8f086d1aeedb3e80436029a2f28d069f83
+  sha256: 2b31bb4e94708e7ffb4ee6501d7f5f664df7e1c4c572e91e9e0d12484c6a6910
 
 build:
   number: 0
@@ -16,7 +19,7 @@ build:
     - ipcluster = ipyparallel.cluster.app:main
     - ipcontroller = ipyparallel.controller.app:main
     - ipengine = ipyparallel.engine.app:main
-  skip: true # [py<38]
+  skip: true  # [py<310]
 
 requirements:
   host:
@@ -37,10 +40,9 @@ requirements:
     - psutil
     - python-dateutil >=2.1
     - tqdm
+  run_constrained:
+    - jupyterlab >=3
 
-#E   PermissionError: [Errno 13] Permission denied: '/tmp/log/ipcontroller-test-106717.log'
-{% set deselect_tests = "" %}
-{% set deselect_tests = " --deselect=test_cluster.py::test_cluster_repr" %}  # [unix]
 test:
   imports:
     - ipyparallel
@@ -85,7 +87,7 @@ about:
   license_family: BSD
   summary: Interactive Parallel Computing with IPython
   description: |
-    IPython Parallel (ipyparallel) is a Python package and collection of CLI scripts 
+    IPython Parallel (ipyparallel) is a Python package and collection of CLI scripts
     for controlling clusters of IPython processes, built on the Jupyter protocol.
   doc_url: https://ipyparallel.readthedocs.io
   dev_url: https://github.com/ipython/ipyparallel
