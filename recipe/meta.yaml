@@ -76,7 +76,7 @@ test:
     - jupyter_server <3
     - notebook
     - nbclassic
-    - m2-grep  # [win]
+    - msys2-grep  # [win]
     - mpi4py  # [win]
 
 about:
