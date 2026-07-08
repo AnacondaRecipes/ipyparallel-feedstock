@@ -1,8 +1,5 @@
 {% set name = "ipyparallel" %}
 {% set version = "9.2.0" %}
-{% set deselect_tests = "" %}
-{% set deselect_tests = " --deselect=test_cluster.py::test_cluster_repr" %}  # [unix]
-
 #E   PermissionError: [Errno 13] Permission denied: '/tmp/log/ipcontroller-test-106717.log'
 package:
   name: {{ name|lower }}
@@ -42,6 +39,8 @@ requirements:
   run_constrained:
     - jupyterlab >=3
 
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=test_cluster.py::test_cluster_repr" %}  # [unix]
 test:
   imports:
     - ipyparallel
